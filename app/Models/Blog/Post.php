@@ -65,6 +65,6 @@ class Post extends Model implements HasMedia
     // URL de la première image
     public function getFirstMediaUrlAttribute()
     {
-        return $this->getFirstMediaUrl('plant-images');
+        return $this->getFirstMediaUrl('post-images');
     }
 }

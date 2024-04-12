@@ -11,7 +11,7 @@ class PostController extends Controller
     // Get all posts
     public function index()
     {
-        $posts = Post::with('media', 'author', 'category', 'tags', 'comments')->get();
+        $posts = Post::with('media', 'author.media', 'category', 'tags', 'comments')->get();
 
         return response()->json($posts);
     }
@@ -19,7 +19,7 @@ class PostController extends Controller
     // Get a single post
     public function show($id)
     {
-        $post = Post::with('media', 'author', 'category', 'tags', 'comments')->find($id);
+        $post = Post::with('media', 'author.media', 'category', 'tags', 'comments')->find($id);
 
         return response()->json($post);
     }

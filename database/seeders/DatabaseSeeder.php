@@ -36,11 +36,11 @@ class DatabaseSeeder extends Seeder
         // Clear images
         Storage::deleteDirectory('public');
 
-        User::factory(10)->create();
+        User::factory(5)->create();
 
         // Admin
         $this->command->warn(PHP_EOL . 'Creating admin user...');
-        $user = $this->withProgressBar(1, fn () => User::factory(1)->create([
+        $user = $this->withProgressBar(20, fn () => User::factory(1)->create([
             'name' => 'Admin Test',
             'email' => 'kisama972@gmail.com',
         ]));
@@ -55,7 +55,7 @@ class DatabaseSeeder extends Seeder
         // Blog
         $this->command->warn(PHP_EOL . 'Creating blog categories...');
         $blogCategories = $this->withProgressBar(20, fn () => BlogCategory::factory(1)
-            ->count(20)
+            ->count(5)
             ->create());
         $this->command->info('Blog categories created.');
 
