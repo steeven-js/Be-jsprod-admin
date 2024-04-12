@@ -3,16 +3,19 @@
 namespace App\Models\Blog;
 
 use App\Models\Comment;
-use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Spatie\Tags\HasTags;
+use Spatie\MediaLibrary\HasMedia;
 use Illuminate\Database\Eloquent\Model;
+use Spatie\MediaLibrary\InteractsWithMedia;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
-use Spatie\Tags\HasTags;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 
-class Post extends Model
+class Post extends Model implements HasMedia
 {
-    use HasFactory;
     use HasTags;
+    use HasFactory;
+    use InteractsWithMedia;
 
     /**
      * @var string
@@ -24,6 +27,14 @@ class Post extends Model
      */
     protected $casts = [
         'published_at' => 'date',
+    ];
+
+    protected $fillable = [
+        'title',
+        'content',
+        'published_at',
+        'blog_author_id',
+        'blog_category_id',
     ];
 
     /** @return BelongsTo<Author,self> */
@@ -42,5 +53,18 @@ class Post extends Model
     public function comments(): MorphMany
     {
         return $this->morphMany(Comment::class, 'commentable');
+    }
+
+    // Média
+    public function registerMediaCollections(): void
+    {
+        // You can customize the collection name and the disk as needed
+        $this->addMediaCollection('post-image')->singleFile();
+    }
+
+    // URL de la première image
+    public function getFirstMediaUrlAttribute()
+    {
+        return $this->getFirstMediaUrl('plant-images');
     }
 }

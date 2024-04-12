@@ -78,8 +78,10 @@ class PostResource extends Resource
 
                 Forms\Components\Section::make('Image')
                     ->schema([
-                        Forms\Components\FileUpload::make('image')
-                            ->image()
+                        Forms\Components\SpatieMediaLibraryFileUpload::make('media')
+                            ->collection('post-image')
+                            ->multiple()
+                            ->maxFiles(5)
                             ->hiddenLabel(),
                     ])
                     ->collapsible(),
@@ -90,8 +92,9 @@ class PostResource extends Resource
     {
         return $table
             ->columns([
-                Tables\Columns\ImageColumn::make('image')
-                    ->label('Image'),
+                Tables\Columns\SpatieMediaLibraryImageColumn::make('post-image')
+                    ->label('Image')
+                    ->collection('post-image'),
 
                 Tables\Columns\TextColumn::make('title')
                     ->searchable()
