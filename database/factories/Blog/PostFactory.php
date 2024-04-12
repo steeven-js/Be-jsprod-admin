@@ -21,6 +21,8 @@ class PostFactory extends Factory
         return [
             'title' => $title = $this->faker->unique()->sentence(4),
             'slug' => Str::slug($title),
+            'description' => $this->faker->sentence(),
+            'duration' => $this->faker->numberBetween(1, 10),
             'content' => $this->faker->realText(),
             'image' => $this->createImage(),
             'published_at' => $this->faker->dateTimeBetween('-6 month', '+1 month'),

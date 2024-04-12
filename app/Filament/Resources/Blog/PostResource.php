@@ -55,6 +55,13 @@ class PostResource extends Resource
                             ->maxLength(255)
                             ->unique(Post::class, 'slug', ignoreRecord: true),
 
+                        Forms\Components\TextInput::make('description')
+                            ->required()
+                            ->maxLength(160),
+
+                        Forms\Components\TextInput::make('duration')
+                            ->required(),
+
                         Forms\Components\MarkdownEditor::make('content')
                             ->required()
                             ->columnSpan('full'),

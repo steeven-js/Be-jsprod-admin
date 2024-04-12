@@ -19,6 +19,8 @@ return new class() extends Migration
             $table->foreignId('blog_category_id')->nullable()->nullOnDelete();
             $table->string('title');
             $table->string('slug')->unique();
+            $table->string('description', 160)->nullable();
+            $table->float('duration')->default(5);
             $table->longText('content');
             $table->date('published_at')->nullable();
             $table->string('seo_title', 60)->nullable();

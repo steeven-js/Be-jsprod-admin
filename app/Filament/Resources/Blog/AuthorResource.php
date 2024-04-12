@@ -40,6 +40,10 @@ class AuthorResource extends Resource
                     ->email()
                     ->unique(Author::class, 'email', ignoreRecord: true),
 
+                Forms\Components\SpatieMediaLibraryFileUpload::make('media')
+                    ->label('Avatar')
+                    ->collection('author-avatar'),
+
                 Forms\Components\MarkdownEditor::make('bio')
                     ->columnSpan('full'),
 
