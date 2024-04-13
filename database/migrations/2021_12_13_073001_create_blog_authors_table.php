@@ -17,7 +17,7 @@ return new class() extends Migration
             $table->id();
             $table->string('name');
             $table->string('email')->unique();
-            $table->string('photo')->nullable();
+            $table->string('role')->default('author');
             $table->longText('bio')->nullable();
             $table->string('github_handle')->nullable();
             $table->string('twitter_handle')->nullable();
