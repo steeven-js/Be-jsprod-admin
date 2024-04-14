@@ -3,48 +3,96 @@
 namespace App\Filament\Resources\Blog;
 
 use App\Filament\Resources\Blog\StudyResource\Pages;
-use App\Filament\Resources\Blog\StudyResource\RelationManagers;
 use App\Models\Blog\Study;
 use Filament\Forms;
+use Filament\Forms\Components\SpatieTagsInput;
 use Filament\Forms\Form;
+use Filament\Infolists\Components;
+use Filament\Infolists\Infolist;
+use Filament\Notifications\Notification;
+use Filament\Pages\SubNavigationPosition;
+use Filament\Resources\Pages\Page;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\SoftDeletingScope;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Carbon;
+use Illuminate\Support\Str;
 
 class StudyResource extends Resource
 {
     protected static ?string $model = Study::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
+    protected static ?string $slug = 'blog/studies';
+
+    protected static ?string $recordTitleAttribute = 'title';
+
+    protected static ?string $navigationGroup = 'Blog';
+
+    protected static ?string $navigationIcon = 'heroicon-o-document-text';
+
+    protected static ?int $navigationSort = 0;
+
+    protected static SubNavigationPosition $subNavigationPosition = SubNavigationPosition::Top;
 
     public static function form(Form $form): Form
     {
         return $form
             ->schema([
-                Forms\Components\TextInput::make('blog_author_id')
-                    ->numeric(),
-                Forms\Components\TextInput::make('blog_category_id')
-                    ->numeric(),
-                Forms\Components\TextInput::make('title')
-                    ->required()
-                    ->maxLength(255),
-                Forms\Components\TextInput::make('slug')
-                    ->required()
-                    ->maxLength(255),
-                Forms\Components\TextInput::make('description')
-                    ->maxLength(160),
-                Forms\Components\Textarea::make('content')
-                    ->required()
-                    ->columnSpanFull(),
-                Forms\Components\TextInput::make('website')
-                    ->maxLength(255),
-                Forms\Components\DatePicker::make('published_at'),
-                Forms\Components\TextInput::make('seo_title')
-                    ->maxLength(60),
-                Forms\Components\TextInput::make('seo_description')
-                    ->maxLength(160),
+                Forms\Components\Section::make()
+                    ->schema([
+                        Forms\Components\TextInput::make('title')
+                            ->required()
+                            ->live(onBlur: true)
+                            ->maxLength(255)
+                            ->afterStateUpdated(fn (string $operation, $state, Forms\Set $set) => $operation === 'create' ? $set('slug', Str::slug($state)) : null),
+
+                        Forms\Components\TextInput::make('slug')
+                            ->disabled()
+                            ->dehydrated()
+                            ->required()
+                            ->maxLength(255)
+                            ->unique(Study::class, 'slug', ignoreRecord: true),
+
+                        Forms\Components\TextInput::make('description')
+                            ->required()
+                            ->maxLength(160),
+
+                        Forms\Components\MarkdownEditor::make('content')
+                            ->required()
+                            ->columnSpan('full'),
+
+                        Forms\Components\Select::make('blog_author_id')
+                            ->relationship('author', 'name')
+                            ->searchable()
+                            ->required(),
+
+                        Forms\Components\Select::make('blog_category_id')
+                            ->relationship('category', 'name')
+                            ->searchable()
+                            ->required(),
+
+                        Forms\Components\TextInput::make('website')
+                            ->label('Site URL')
+                            ->maxLength(255),
+
+                        Forms\Components\DatePicker::make('published_at')
+                            ->label('Published Date'),
+
+                        SpatieTagsInput::make('tags'),
+                    ])
+                    ->columns(2),
+
+                Forms\Components\Section::make('Image')
+                    ->schema([
+                        Forms\Components\SpatieMediaLibraryFileUpload::make('media')
+                            ->collection('study-image')
+                            ->multiple()
+                            ->maxFiles(5)
+                            ->hiddenLabel(),
+                    ])
+                    ->collapsible(),
             ]);
     }
 
@@ -52,46 +100,97 @@ class StudyResource extends Resource
     {
         return $table
             ->columns([
-                Tables\Columns\TextColumn::make('blog_author_id')
-                    ->numeric()
-                    ->sortable(),
-                Tables\Columns\TextColumn::make('blog_category_id')
-                    ->numeric()
-                    ->sortable(),
+                Tables\Columns\SpatieMediaLibraryImageColumn::make('study-image')
+                    ->label('Image')
+                    ->collection('study-image'),
+
                 Tables\Columns\TextColumn::make('title')
-                    ->searchable(),
-                Tables\Columns\TextColumn::make('slug')
-                    ->searchable(),
-                Tables\Columns\TextColumn::make('description')
-                    ->searchable(),
-                Tables\Columns\TextColumn::make('website')
-                    ->searchable(),
-                Tables\Columns\TextColumn::make('published_at')
-                    ->date()
+                    ->searchable()
                     ->sortable(),
-                Tables\Columns\TextColumn::make('seo_title')
-                    ->searchable(),
-                Tables\Columns\TextColumn::make('seo_description')
-                    ->searchable(),
-                Tables\Columns\TextColumn::make('created_at')
-                    ->dateTime()
+
+                Tables\Columns\TextColumn::make('slug')
+                    ->searchable()
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
-                Tables\Columns\TextColumn::make('updated_at')
-                    ->dateTime()
+
+                Tables\Columns\TextColumn::make('author.name')
+                    ->searchable()
+                    ->sortable()
+                    ->toggleable(),
+
+                Tables\Columns\TextColumn::make('website')
+                    ->searchable()
+                    ->sortable()
+                    ->toggleable(),
+
+                Tables\Columns\TextColumn::make('status')
+                    ->badge()
+                    ->getStateUsing(fn (Study $record): string => $record->published_at?->isPast() ? 'Published' : 'Draft')
+                    ->colors([
+                        'success' => 'Published',
+                    ]),
+
+                Tables\Columns\TextColumn::make('category.name')
+                    ->searchable()
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
+
+                Tables\Columns\TextColumn::make('published_at')
+                    ->label('Published Date')
+                    ->date(),
+
+                Tables\Columns\TextColumn::make('comments.customer.name')
+                    ->label('Comment Authors')
+                    ->listWithLineBreaks()
+                    ->limitList(2)
+                    ->expandableLimitedList(),
             ])
             ->filters([
-                //
+                Tables\Filters\Filter::make('published_at')
+                    ->form([
+                        Forms\Components\DatePicker::make('published_from')
+                            ->placeholder(fn ($state): string => 'Dec 18, ' . now()->subYear()->format('Y')),
+                        Forms\Components\DatePicker::make('published_until')
+                            ->placeholder(fn ($state): string => now()->format('M d, Y')),
+                    ])
+                    ->query(function (Builder $query, array $data): Builder {
+                        return $query
+                            ->when(
+                                $data['published_from'] ?? null,
+                                fn (Builder $query, $date): Builder => $query->whereDate('published_at', '>=', $date),
+                            )
+                            ->when(
+                                $data['published_until'] ?? null,
+                                fn (Builder $query, $date): Builder => $query->whereDate('published_at', '<=', $date),
+                            );
+                    })
+                    ->indicateUsing(function (array $data): array {
+                        $indicators = [];
+                        if ($data['published_from'] ?? null) {
+                            $indicators['published_from'] = 'Published from ' . Carbon::parse($data['published_from'])->toFormattedDateString();
+                        }
+                        if ($data['published_until'] ?? null) {
+                            $indicators['published_until'] = 'Published until ' . Carbon::parse($data['published_until'])->toFormattedDateString();
+                        }
+
+                        return $indicators;
+                    }),
             ])
             ->actions([
+                Tables\Actions\ViewAction::make(),
+
                 Tables\Actions\EditAction::make(),
+
+                Tables\Actions\DeleteAction::make(),
             ])
-            ->bulkActions([
-                Tables\Actions\BulkActionGroup::make([
-                    Tables\Actions\DeleteBulkAction::make(),
-                ]),
+            ->groupedBulkActions([
+                Tables\Actions\DeleteBulkAction::make()
+                    ->action(function () {
+                        Notification::make()
+                            ->title('Now, now, don\'t be cheeky, leave some records for others to play with!')
+                            ->warning()
+                            ->send();
+                    }),
             ]);
     }
 
