@@ -2,9 +2,10 @@
 
 namespace App\Models\Blog;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
+use App\Models\Blog\Study;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class Category extends Model
 {
@@ -26,5 +27,11 @@ class Category extends Model
     public function posts(): HasMany
     {
         return $this->hasMany(Post::class, 'blog_category_id');
+    }
+
+    /** @return HasMany<Study> */
+    public function studies(): HasMany
+    {
+        return $this->hasMany(Study::class, 'blog_category_id');
     }
 }
