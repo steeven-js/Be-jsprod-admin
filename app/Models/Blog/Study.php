@@ -56,13 +56,17 @@ class Study extends Model implements HasMedia
     // Média
     public function registerMediaCollections(): void
     {
-        // You can customize the collection name and the disk as needed
-        $this->addMediaCollection('study-image')->singleFile();
+        // Gallery
+        $this->addMediaCollection('study-gallery');
+
+        // Cover
+        $this->addMediaCollection('study-cover')
+            ->singleFile();
     }
 
     // URL de la première image
     public function getFirstMediaUrlAttribute()
     {
-        return $this->getFirstMediaUrl('study-images');
+        return $this->getFirstMediaUrl('study-gallery');
     }
 }

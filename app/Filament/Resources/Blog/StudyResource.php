@@ -84,12 +84,21 @@ class StudyResource extends Resource
                     ])
                     ->columns(2),
 
-                Forms\Components\Section::make('Image')
+                Forms\Components\Section::make('Cover Image')
                     ->schema([
-                        Forms\Components\SpatieMediaLibraryFileUpload::make('media')
-                            ->collection('study-image')
+                        Forms\Components\SpatieMediaLibraryFileUpload::make('covers')
+                            ->collection('study-cover')
+                            ->maxFiles(1)
+                            ->hiddenLabel(),
+                    ])
+                    ->collapsible(),
+
+                Forms\Components\Section::make('Images')
+                    ->schema([
+                        Forms\Components\SpatieMediaLibraryFileUpload::make('study-gallery')
+                            ->collection('study-gallery')
                             ->multiple()
-                            ->maxFiles(5)
+                            ->maxFiles(6)
                             ->hiddenLabel(),
                     ])
                     ->collapsible(),
@@ -100,9 +109,9 @@ class StudyResource extends Resource
     {
         return $table
             ->columns([
-                Tables\Columns\SpatieMediaLibraryImageColumn::make('study-image')
+                Tables\Columns\SpatieMediaLibraryImageColumn::make('study-gallery')
                     ->label('Image')
-                    ->collection('study-image'),
+                    ->collection('study-gallery'),
 
                 Tables\Columns\TextColumn::make('title')
                     ->searchable()
@@ -218,8 +227,8 @@ class StudyResource extends Resource
                                     ]),
                                 ]),
                             Components\ImageEntry::make('image')
-                                ->defaultImageUrl(url('/images/marketing_1.jpg'))
-                                ->url(fn (Study $record) => $record->getFirstMediaUrl('study-image'))
+                                ->defaultImageUrl(static::getFirstImage($infolist->record))
+                                ->url(static::getFirstImage($infolist->record)) // Pass the current record to the getFirstImage method
                                 ->hiddenLabel()
                                 ->grow(false),
                         ])->from('lg'),
@@ -287,5 +296,11 @@ class StudyResource extends Resource
         }
 
         return $details;
+    }
+
+    public static function getFirstImage(Model $record): string
+    {
+
+        return $record->getFirstMediaUrl('study-gallery');
     }
 }

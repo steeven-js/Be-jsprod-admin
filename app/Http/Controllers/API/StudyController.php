@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Api;
 use App\Models\Blog\Study;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
+use App\Models\Blog\Category;
 
 class StudyController extends Controller
 {
@@ -14,10 +15,17 @@ class StudyController extends Controller
     public function index()
     {
         // Récupérer la liste des études
-        $studies = Study::with('author', 'category', 'media')->paginate(10);
+        $studies = Study::with('author', 'category', 'media')
+            ->orderBy('created_at', 'desc')
+            ->get();
+
+        $categories = Category::all();
 
         // Retourner la liste des études
-        return response()->json($studies);
+        return response()->json([
+            'studies' => $studies,
+            'categories' => $categories
+        ]);
     }
 
     /**
