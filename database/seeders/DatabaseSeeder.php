@@ -56,7 +56,7 @@ class DatabaseSeeder extends Seeder
         // Blog
         $this->command->warn(PHP_EOL . 'Creating blog categories...');
         $blogCategories = $this->withProgressBar(6, fn () => BlogCategory::factory(1)
-            ->count(5)
+            ->count(1)
             ->create());
         $this->command->info('Blog categories created.');
 
