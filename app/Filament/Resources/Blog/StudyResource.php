@@ -194,6 +194,56 @@ class StudyResource extends Resource
             ]);
     }
 
+    public static function infolist(Infolist $infolist): Infolist
+    {
+        return $infolist
+            ->schema([
+                Components\Section::make()
+                    ->schema([
+                        Components\Split::make([
+                            Components\Grid::make(2)
+                                ->schema([
+                                    Components\Group::make([
+                                        Components\TextEntry::make('title'),
+                                        Components\TextEntry::make('slug'),
+                                        Components\TextEntry::make('published_at')
+                                            ->badge()
+                                            ->date()
+                                            ->color('success'),
+                                    ]),
+                                    Components\Group::make([
+                                        Components\TextEntry::make('author.name'),
+                                        Components\TextEntry::make('category.name'),
+                                        Components\SpatieTagsEntry::make('tags'),
+                                    ]),
+                                ]),
+                            Components\ImageEntry::make('image')
+                                ->defaultImageUrl(url('http://127.0.0.1:8000/storage/01HVEQ2SXCGZ660PSGCGJMA51Y.jpg'))
+                                ->url(fn (Study $record) => $record->getFirstMediaUrl('study-image'))
+                                ->hiddenLabel()
+                                ->grow(false),
+                        ])->from('lg'),
+                    ]),
+                Components\Section::make('Content')
+                    ->schema([
+                        Components\TextEntry::make('content')
+                            ->prose()
+                            ->markdown()
+                            ->hiddenLabel(),
+                    ])
+                    ->collapsible(),
+            ]);
+    }
+
+    public static function getRecordSubNavigation(Page $page): array
+    {
+        return $page->generateNavigationItems([
+            Pages\ViewStudy::class,
+            Pages\EditStudy::class,
+            Pages\ManageStudyComments::class,
+        ]);
+    }
+
     public static function getRelations(): array
     {
         return [
@@ -206,7 +256,36 @@ class StudyResource extends Resource
         return [
             'index' => Pages\ListStudies::route('/'),
             'create' => Pages\CreateStudy::route('/create'),
+            'comments' => Pages\ManageStudyComments::route('/{record}/comments'),
             'edit' => Pages\EditStudy::route('/{record}/edit'),
+            'view' => Pages\ViewStudy::route('/{record}'),
         ];
+    }
+
+    /** @return Builder<Study> */
+    public static function getGlobalSearchEloquentQuery(): Builder
+    {
+        return parent::getGlobalSearchEloquentQuery()->with(['author', 'category']);
+    }
+
+    public static function getGloballySearchableAttributes(): array
+    {
+        return ['title', 'slug', 'author.name', 'category.name'];
+    }
+
+    public static function getGlobalSearchResultDetails(Model $record): array
+    {
+        /** @var Study $record */
+        $details = [];
+
+        if ($record->author) {
+            $details['Author'] = $record->author->name;
+        }
+
+        if ($record->category) {
+            $details['Category'] = $record->category->name;
+        }
+
+        return $details;
     }
 }
