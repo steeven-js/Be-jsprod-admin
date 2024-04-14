@@ -218,7 +218,7 @@ class StudyResource extends Resource
                                     ]),
                                 ]),
                             Components\ImageEntry::make('image')
-                                ->defaultImageUrl(url('http://127.0.0.1:8000/storage/01HVEQ2SXCGZ660PSGCGJMA51Y.jpg'))
+                                ->defaultImageUrl(url('/images/marketing_1.jpg'))
                                 ->url(fn (Study $record) => $record->getFirstMediaUrl('study-image'))
                                 ->hiddenLabel()
                                 ->grow(false),
