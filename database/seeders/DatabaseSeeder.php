@@ -2,30 +2,32 @@
 
 namespace Database\Seeders;
 
-use App\Filament\Resources\Shop\OrderResource;
+use Closure;
+use App\Models\User;
 use App\Models\Address;
-use App\Models\Blog\Author;
-use App\Models\Blog\Category as BlogCategory;
+use App\Models\Comment;
 use App\Models\Blog\Link;
 use App\Models\Blog\Post;
-use App\Models\Comment;
 use App\Models\Shop\Brand;
-use App\Models\Shop\Category as ShopCategory;
-use App\Models\Shop\Customer;
 use App\Models\Shop\Order;
-use App\Models\Shop\OrderItem;
+use App\Models\Blog\Author;
 use App\Models\Shop\Payment;
 use App\Models\Shop\Product;
-use App\Models\User;
-use Closure;
-use Filament\Notifications\Actions\Action;
-use Filament\Notifications\Notification;
-use Illuminate\Database\Eloquent\Collection;
-use Illuminate\Database\Query\Expression;
+use App\Models\Blog\Category;
+use App\Models\Shop\Customer;
+use App\Models\Shop\OrderItem;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
+use Filament\Notifications\Notification;
+use Illuminate\Database\Query\Expression;
+use Filament\Notifications\Actions\Action;
+use Illuminate\Database\Eloquent\Collection;
+use App\Models\Blog\Category as BlogCategory;
+use App\Models\Shop\Category as ShopCategory;
+use App\Filament\Resources\Shop\OrderResource;
 use Symfony\Component\Console\Helper\ProgressBar;
+use Illuminate\Support\Str;
 
 class DatabaseSeeder extends Seeder
 {
@@ -53,10 +55,48 @@ class DatabaseSeeder extends Seeder
         $this->command->info('Shop customers created.');
 
         // Blog
+
+        // Categories
+        $blogCategories = [
+            [
+                'id' => 1,
+                'name' => 'Technology',
+            ],
+            [
+                'id' => 2,
+                'name' => 'Marketing',
+            ],
+            [
+                'id' => 3,
+                'name' => 'Design',
+            ],
+            [
+                'id' => 4,
+                'name' => 'Photography',
+            ],
+            [
+                'id' => 5,
+                'name' => 'Art',
+            ],
+            [
+                'id' => 6,
+                'name' => 'Fashion',
+            ],
+        ];
+
         $this->command->warn(PHP_EOL . 'Creating blog categories...');
-        $blogCategories = $this->withProgressBar(20, fn () => BlogCategory::factory(1)
-            ->count(5)
-            ->create());
+
+        $categoriesCollection = collect($blogCategories);
+
+        foreach ($blogCategories as $category) {
+            Category::factory()->create([
+                'name' => $category['name'],
+                'slug' => Str::slug($category['name']),
+                'description' => 'Description for ' . $category['name'],
+                'is_visible' => true,
+            ]);
+        }
+
         $this->command->info('Blog categories created.');
 
         $this->command->warn(PHP_EOL . 'Creating blog authors and posts...');
@@ -65,9 +105,13 @@ class DatabaseSeeder extends Seeder
                 Post::factory()->count(5)
                     ->has(
                         Comment::factory()->count(rand(5, 10))
-                            ->state(fn (array $attributes, Post $post) => ['customer_id' => $customers->random(1)->first()->id]),
+                            ->state(function (array $attributes, Post $post) use ($categoriesCollection) {
+                                return ['customer_id' => Customer::inRandomOrder()->first()->id];
+                            }),
                     )
-                    ->state(fn (array $attributes, Author $author) => ['blog_category_id' => $blogCategories->random(1)->first()->id]),
+                    ->state(function (array $attributes, Author $author) use ($categoriesCollection) {
+                        return ['blog_category_id' => $categoriesCollection->random()['id']];
+                    }),
                 'posts'
             )
             ->create());
