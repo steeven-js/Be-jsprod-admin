@@ -23,6 +23,15 @@ class Category extends Model
         'is_visible' => 'boolean',
     ];
 
+    protected $fillable = [
+        'name',
+        'slug',
+        'description',
+        'is_visible',
+        'seo_title',
+        'seo_description',
+    ];
+
     /** @return HasMany<Post> */
     public function posts(): HasMany
     {
