@@ -8,13 +8,16 @@ use App\Http\Controllers\Controller;
 
 class PostController extends Controller
 {
-    // Get all posts
+    // Get all posts with their relationships and paginate them
     public function index()
     {
-        $posts = Post::with('media', 'author.media', 'category', 'tags', 'comments')->get();
+        $posts = Post::with('media', 'author.media', 'category', 'tags', 'comments')
+            ->orderBy('created_at', 'desc')
+            ->paginate(8);
 
         return response()->json($posts);
     }
+
 
     // Get a single post
     public function show($id)
