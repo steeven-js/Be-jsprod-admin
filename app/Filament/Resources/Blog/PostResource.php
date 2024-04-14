@@ -46,7 +46,7 @@ class PostResource extends Resource
                             ->required()
                             ->live(onBlur: true)
                             ->maxLength(255)
-                            ->afterStateUpdated(fn (string $operation, $state, Forms\Set $set) => $operation === 'create' ? $set('slug', Str::slug($state)) : null),
+                            ->afterStateUpdated(fn (string $operation, $state, Forms\Set $set) => $operation === 'create' || $operation === 'edit' ? $set('slug', Str::slug($state)) : null),
 
                         Forms\Components\TextInput::make('slug')
                             ->disabled()
