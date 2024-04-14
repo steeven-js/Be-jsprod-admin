@@ -14,7 +14,7 @@ class StudyController extends Controller
     public function index()
     {
         // Récupérer la liste des études
-        $studies = Study::with('author', 'category', 'media')->get();
+        $studies = Study::with('author', 'category', 'media')->paginate(10);
 
         // Retourner la liste des études
         return response()->json($studies);
@@ -26,7 +26,7 @@ class StudyController extends Controller
     public function show(string $id)
     {
         // Réccupérer l'étude
-        $study = Study::find($id);
+        $study = Study::with('author', 'category', 'media')->find($id);
 
         // Retourner l'étude
         return response()->json($study);
