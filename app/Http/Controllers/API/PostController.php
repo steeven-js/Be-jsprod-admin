@@ -13,7 +13,7 @@ class PostController extends Controller
     {
         $posts = Post::with('media', 'author.media', 'category', 'tags', 'comments')
             ->orderBy('created_at', 'desc')
-            ->where('published_at')
+            ->where('published_at', !null)
             ->paginate(8);
 
         return response()->json($posts);
@@ -24,7 +24,7 @@ class PostController extends Controller
     public function show($id)
     {
         $post = Post::with('media', 'author.media', 'category', 'tags', 'comments')
-            ->where('published_at')
+            ->where('published_at', !null)
             ->find($id);
 
         return response()->json($post);
