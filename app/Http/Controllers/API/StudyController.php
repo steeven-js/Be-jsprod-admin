@@ -17,6 +17,7 @@ class StudyController extends Controller
         // Récupérer la liste des études
         $studies = Study::with('author', 'category', 'media')
             ->orderBy('created_at', 'desc')
+            ->where('status', 'published')
             ->get();
 
         $categories = Category::all();
@@ -34,7 +35,9 @@ class StudyController extends Controller
     public function show(string $id)
     {
         // Réccupérer l'étude
-        $study = Study::with('author', 'category', 'media')->find($id);
+        $study = Study::with('author', 'category', 'media')
+            ->where('status', 'published')
+            ->find($id);
 
         // Retourner l'étude
         return response()->json($study);
