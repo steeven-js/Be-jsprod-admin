@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers\API;
+namespace App\Http\Controllers\Api;
 
 use Spatie\Tags\Tag;
 use Illuminate\Http\Request;
