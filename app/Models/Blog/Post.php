@@ -31,6 +31,7 @@ class Post extends Model implements HasMedia
 
     protected $fillable = [
         'title',
+        'slug',
         'content',
         'published_at',
         'blog_author_id',
