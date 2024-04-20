@@ -4,7 +4,6 @@ namespace App\Http\Controllers\Api;
 
 use App\Models\Blog\Post;
 use Illuminate\Http\Request;
-use App\Models\Blog\Category;
 use App\Http\Controllers\Controller;
 
 class PostController extends Controller
@@ -17,12 +16,7 @@ class PostController extends Controller
             ->where('published_at', '!=', null)
             ->paginate(8);
 
-        $categories = Category::all();
-
-        return response()->json([
-            'posts' => $posts,
-            'categories' => $categories
-        ]);
+        return response()->json($posts);
     }
 
 
