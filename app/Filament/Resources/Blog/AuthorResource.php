@@ -49,11 +49,13 @@ class AuthorResource extends Resource
 
                 Forms\Components\TextInput::make('github_handle')
                     ->label('GitHub handle')
-                    ->maxLength(255),
+                    ->url()
+                    ->suffixIcon('heroicon-m-globe-alt'),
 
                 Forms\Components\TextInput::make('twitter_handle')
                     ->label('Twitter handle')
-                    ->maxLength(255),
+                    ->url()
+                    ->suffixIcon('heroicon-m-globe-alt'),
             ]);
     }
 

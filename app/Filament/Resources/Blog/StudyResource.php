@@ -66,16 +66,19 @@ class StudyResource extends Resource
                         Forms\Components\Select::make('blog_author_id')
                             ->relationship('author', 'name')
                             ->searchable()
+                            ->preload()
                             ->required(),
 
                         Forms\Components\Select::make('blog_category_id')
                             ->relationship('category', 'name')
                             ->searchable()
+                            ->preload()
                             ->required(),
 
                         Forms\Components\TextInput::make('website')
                             ->label('Site URL')
-                            ->maxLength(255),
+                            ->url()
+                            ->suffixIcon('heroicon-m-globe-alt'),
 
                         Forms\Components\DatePicker::make('published_at')
                             ->label('Published Date'),
