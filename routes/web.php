@@ -1,5 +1,6 @@
 <?php
 
+use App\Mail\OrderShipped;
 use App\Http\Controllers\ProfileController;
 
 Route::get('/', function () {
@@ -9,6 +10,10 @@ Route::get('/', function () {
 Route::get('/dashboard', function () {
     return view('dashboard');
 })->middleware(['auth', 'verified'])->name('dashboard');
+
+Route::get('/testroute', function () {
+    Mail::to('mailtrap.club@gmail.com')->send(new OrderShipped());
+});
 
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
