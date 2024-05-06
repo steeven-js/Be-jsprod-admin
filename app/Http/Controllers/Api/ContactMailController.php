@@ -5,6 +5,8 @@ namespace App\Http\Controllers\Api;
 use App\Models\ContactMail;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
+use Illuminate\Support\Facades\Mail;
+use App\Mail\ContactMail as SendMail;
 use Illuminate\Support\Facades\Validator;
 
 class ContactMailController extends Controller
@@ -57,6 +59,9 @@ class ContactMailController extends Controller
             'phoneNumber' => $validatedData['phoneNumber'],
             'website' => $validatedData['website'],
         ]);
+
+        // Envoi de l'e-mail
+        Mail::to('contact@jsprod.fr')->send(new SendMail($contactMail));
 
         // Retourne les informations du nouveau contact de messagerie au format JSON
         return response()->json($contactMail, 201);
