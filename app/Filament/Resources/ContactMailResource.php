@@ -23,25 +23,32 @@ class ContactMailResource extends Resource
     {
         return $form
             ->schema([
-                Forms\Components\TextInput::make('budget_min')
-                    ->numeric(),
-                Forms\Components\TextInput::make('budget_max')
-                    ->numeric(),
-                Forms\Components\TextInput::make('compnany')
+                Forms\Components\TextInput::make('services')
+                    ->required(),
+                Forms\Components\TextInput::make('budget')
+                    ->required(),
+                Forms\Components\TextInput::make('company')
+                    ->required()
                     ->maxLength(255),
                 Forms\Components\TextInput::make('email')
                     ->email()
+                    ->required()
                     ->maxLength(255),
                 Forms\Components\TextInput::make('firstName')
+                    ->required()
                     ->maxLength(255),
                 Forms\Components\TextInput::make('lastName')
+                    ->required()
                     ->maxLength(255),
                 Forms\Components\Textarea::make('message')
+                    ->required()
                     ->columnSpanFull(),
                 Forms\Components\TextInput::make('phoneNumber')
                     ->tel()
+                    ->required()
                     ->maxLength(255),
                 Forms\Components\TextInput::make('website')
+                    ->required()
                     ->maxLength(255),
             ]);
     }
@@ -50,13 +57,7 @@ class ContactMailResource extends Resource
     {
         return $table
             ->columns([
-                Tables\Columns\TextColumn::make('budget_min')
-                    ->numeric()
-                    ->sortable(),
-                Tables\Columns\TextColumn::make('budget_max')
-                    ->numeric()
-                    ->sortable(),
-                Tables\Columns\TextColumn::make('compnany')
+                Tables\Columns\TextColumn::make('company')
                     ->searchable(),
                 Tables\Columns\TextColumn::make('email')
                     ->searchable(),
