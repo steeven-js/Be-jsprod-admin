@@ -13,6 +13,8 @@ return new class extends Migration
     {
         Schema::create('contact_mails', function (Blueprint $table) {
             $table->id();
+            $table->json('services');
+            $table->json('budget');
             $table->string('company');
             $table->string('email')->unique();
             $table->string('firstName');

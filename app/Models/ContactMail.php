@@ -10,8 +10,8 @@ class ContactMail extends Model
     use HasFactory;
 
     protected $fillable = [
-        'budget_min',
-        'budget_max',
+        'services',
+        'budget',
         'company',
         'email',
         'firstName',
