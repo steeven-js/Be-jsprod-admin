@@ -2,9 +2,10 @@
 
 namespace App\Http\Controllers\Api;
 
-use App\Http\Controllers\Controller;
 use App\Models\ContactMail;
 use Illuminate\Http\Request;
+use App\Http\Controllers\Controller;
+use Illuminate\Support\Facades\Validator;
 
 class ContactMailController extends Controller
 {
@@ -30,37 +31,28 @@ class ContactMailController extends Controller
     public function store(Request $request)
     {
         // Validation des données
-        $this->validate($request, [
-            'budget' => 'required|array|size:2',
-            'budget.*' => 'required|numeric',
-            'compnany' => 'required|min:8',
-            'email' => 'required|email|unique:contact_mails,email',
-            'firstName' => 'required|min:2',
-            'lastName' => 'required|min:2',
-            'message' => 'required|min:8',
-            'phoneNumber' => 'required|min:8',
-            'services' => 'required|array',
-            'services.*' => 'required|in:Technology,Marketing,Design,Photography,Art',
-            'website' => 'required|url',
+        $validatedData = $request->validate([
+            'company' => 'required|string',
+            'email' => 'required|email',
+            'firstName' => 'required|string',
+            'lastName' => 'required|string',
+            'message' => 'nullable|string',
+            'phoneNumber' => 'nullable|string',
+            'website' => 'nullable|string',
         ]);
 
-        // Création d'un nouveau contact mail
+        // Création d'un nouveau contact de messagerie
         $contactMail = ContactMail::create([
-            'budget_min' => $request->budget[0],
-            'budget_max' => $request->budget[1],
-            'compnany' => $request->compnany,
-            'email' => $request->email,
-            'firstName' => $request->firstName,
-            'lastName' => $request->lastName,
-            'message' => $request->message,
-            'phoneNumber' => $request->phoneNumber,
-            'website' => $request->website,
+            'company' => $validatedData['company'],
+            'email' => $validatedData['email'],
+            'firstName' => $validatedData['firstName'],
+            'lastName' => $validatedData['lastName'],
+            'message' => $validatedData['message'],
+            'phoneNumber' => $validatedData['phoneNumber'],
+            'website' => $validatedData['website'],
         ]);
 
-        // Attachement des services au contact mail
-        $contactMail->services()->attach($request->services);
-
-        // Retourne les informations du nouveau contact mail en format JSON
+        // Retourne les informations du nouveau contact de messagerie au format JSON
         return response()->json($contactMail, 201);
     }
 
