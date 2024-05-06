@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Api\ContactMailController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Api\TagController;
@@ -16,3 +17,4 @@ Route::apiResource('posts', PostController::class);
 Route::apiResource('tags', TagController::class);
 Route::apiResource('studies', StudyController::class);
 Route::apiResource('customers', CustomerController::class);
+Route::apiResource('contacts', ContactMailController::class);
