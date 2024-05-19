@@ -61,7 +61,7 @@ class ContactMailController extends Controller
         ]);
 
         // Envoi de l'e-mail
-        Mail::to('contact@jsprod.fr')->send(new SendMail($contactMail));
+        Mail::to('jacques.steeven@gmail.com')->send(new SendMail($contactMail));
 
         // Retourne les informations du nouveau contact de messagerie au format JSON
         return response()->json($contactMail, 201);
