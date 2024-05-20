@@ -16,7 +16,7 @@ return new class extends Migration
             $table->json('services');
             $table->json('budget');
             $table->string('company');
-            $table->string('email')->unique();
+            $table->string('email');
             $table->string('firstName');
             $table->string('lastName');
             $table->text('message');
