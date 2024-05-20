@@ -77,7 +77,7 @@ class PostResource extends Resource
                             ->required(),
 
                         Forms\Components\DatePicker::make('published_at')
-                            ->label('Published Date'),
+                            ->label('Date de publication'),
 
                         SpatieTagsInput::make('tags'),
                     ])
