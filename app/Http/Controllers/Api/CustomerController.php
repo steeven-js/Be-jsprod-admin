@@ -40,6 +40,7 @@ class CustomerController extends Controller
         // Validate the request
         $request->validate([
             'uid' => 'required',
+            'name' => 'required',
             'email' => 'required|email',
         ]);
 
@@ -48,6 +49,7 @@ class CustomerController extends Controller
 
         // Set the customer's attributes
         $customer->uid = $request->uid;
+        $customer->name = $request->name;
         $customer->email = $request->email;
         // Save the customer to the database
         $customer->save();
@@ -85,6 +87,7 @@ class CustomerController extends Controller
         // Validate the request
         $request->validate([
             'uid' => 'required',
+            'name' => 'required', // Add 'name' to the validation rules
             'email' => 'required|email',
         ]);
 
@@ -93,6 +96,7 @@ class CustomerController extends Controller
 
         // Set the customer's attributes
         $customer->uid = $request->uid;
+        $customer->name = $request->name; // Update the 'name' attribute
         $customer->email = $request->email;
 
         // Save the customer to the database

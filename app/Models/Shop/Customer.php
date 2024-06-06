@@ -21,6 +21,14 @@ class Customer extends Model
      */
     protected $table = 'shop_customers';
 
+    protected $fillable = [
+        'uid',
+        'email',
+        'first_name',
+        'last_name',
+        'birthday',
+    ];
+
     /**
      * @var array<string, string>
      */

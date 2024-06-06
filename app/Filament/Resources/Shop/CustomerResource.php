@@ -75,6 +75,9 @@ class CustomerResource extends Resource
     {
         return $table
             ->columns([
+                Tables\Columns\TextColumn::make('uid')
+                    ->searchable(isIndividual: true)
+                    ->sortable(),
                 Tables\Columns\TextColumn::make('name')
                     ->searchable(isIndividual: true)
                     ->sortable(),
