@@ -57,7 +57,7 @@ class DatabaseSeeder extends Seeder
         $this->command->info('Shop brands created.');
 
         $this->command->warn(PHP_EOL . 'Creating shop services...');
-        $services = $this->withProgressBar(50, fn () => Service::factory(1)
+        $services = $this->withProgressBar(3, fn () => Service::factory(1)
             ->create());
         $this->command->info('Shop services created.');
 

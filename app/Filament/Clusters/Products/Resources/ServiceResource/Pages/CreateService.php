@@ -1,8 +1,8 @@
 <?php
 
-namespace App\Filament\Clusters\Products\Resources\Shop\ServiceResource\Pages;
+namespace App\Filament\Clusters\Products\Resources\ServiceResource\Pages;
 
-use App\Filament\Clusters\Products\Resources\Shop\ServiceResource;
+use App\Filament\Clusters\Products\Resources\ServiceResource;
 use Filament\Actions;
 use Filament\Resources\Pages\CreateRecord;
 

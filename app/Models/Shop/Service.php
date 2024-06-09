@@ -17,18 +17,24 @@ class Service extends Model implements HasMedia
     protected $fillable = [
         'name',
         'price',
+        'is_visible',
+        'license',
         'priceSale',
         'caption',
+        'rating',
         'ratingNumber',
         'totalReviews',
         'description',
         'quantity',
-        'image',
+        'commons',
+        'options',
         'specifications',
         'published_at',
     ];
 
     protected $casts = [
+        'commons' => 'array',
+        'options' => 'array',
         'specifications' => 'array',
     ];
 

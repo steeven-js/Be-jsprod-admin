@@ -15,7 +15,8 @@ return new class extends Migration
             $table->id();
             $table->string('name');
             $table->string('slug')->unique();
-            $table->boolean('is_visible')->default(false);
+            $table->boolean('is_visible')->default(true);
+            $table->enum('license', ['Standard', 'Plus', 'Extended'])->default('Standard');
             $table->decimal('price', 6, 2)->nullable();
             $table->decimal('priceSale', 6, 2)->nullable();
             $table->string('caption')->nullable();
@@ -23,6 +24,8 @@ return new class extends Migration
             $table->integer('totalReviews')->nullable();
             $table->text('description')->nullable();
             $table->integer('quantity')->nullable();
+            $table->json('commons')->nullable();
+            $table->json('options')->nullable();
             $table->json('specifications')->nullable();
             $table->date('published_at')->nullable();
             $table->timestamps();

@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Filament\Clusters\Products\Resources\Shop;
+namespace App\Filament\Clusters\Products\Resources;
 
 use Filament\Forms;
 use Filament\Tables;
@@ -12,8 +12,8 @@ use Filament\Resources\Resource;
 use App\Filament\Clusters\Products;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
-use App\Filament\Clusters\Products\Resources\Shop\ServiceResource\Pages;
-use App\Filament\Clusters\Products\Resources\Shop\ServiceResource\RelationManagers;
+use App\Filament\Clusters\Products\Resources\ServiceResource\Pages;
+use App\Filament\Clusters\Products\Resources\ServiceResource\RelationManagers;
 use Filament\Forms\Components\SpatieMediaLibraryFileUpload;
 
 class ServiceResource extends Resource
@@ -81,7 +81,8 @@ class ServiceResource extends Resource
                                     ->required(),
                             ])
                             ->columns(2),
-                        Forms\Components\Section::make('Inventory')
+
+                        Forms\Components\Section::make('Quantity')
                             ->schema([
 
                                 Forms\Components\TextInput::make('quantity')
@@ -92,6 +93,64 @@ class ServiceResource extends Resource
 
                             ])
                             ->columns(2),
+
+                        Forms\Components\Section::make('commons')
+                            ->schema([
+                                Forms\Components\Repeater::make('commons')
+                                    ->schema([
+
+                                        Forms\Components\TextInput::make('title')
+                                            ->label('Title')
+                                            ->maxLength(255)
+                                            ->required(),
+
+                                        Forms\Components\Toggle::make('disabled')
+                                            ->label('Disabled')
+                                            ->default(false),
+
+                                    ])
+                            ])
+                            ->collapsed()
+                            ->columns(1),
+
+                        Forms\Components\Section::make('options')
+                            ->schema([
+                                Forms\Components\Repeater::make('options')
+                                    ->schema([
+
+                                        Forms\Components\TextInput::make('title')
+                                            ->label('Title')
+                                            ->maxLength(255)
+                                            ->required(),
+
+                                        Forms\Components\Toggle::make('disabled')
+                                            ->label('Disabled')
+                                            ->default(false),
+
+                                    ])
+                            ])
+                            ->collapsed()
+                            ->columns(1),
+
+                        Forms\Components\Section::make('specifications')
+                            ->schema([
+                                Forms\Components\Repeater::make('specifications')
+                                    ->schema([
+
+                                        Forms\Components\TextInput::make('label')
+                                            ->label('Label')
+                                            ->maxLength(255)
+                                            ->required(),
+
+                                        Forms\Components\TextInput::make('value')
+                                            ->label('Value')
+                                            ->maxLength(255)
+                                            ->required(),
+
+                                    ])
+                            ])
+                            ->collapsed()
+                            ->columns(1),
 
                     ])
                     ->columnSpan(['lg' => 2]),
@@ -110,8 +169,10 @@ class ServiceResource extends Resource
                                     ->default(now())
                                     ->required(),
                             ]),
+
                     ])
                     ->columnSpan(['lg' => 1]),
+
             ])
             ->columns(3);
     }
