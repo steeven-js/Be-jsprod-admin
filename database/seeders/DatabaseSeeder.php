@@ -14,6 +14,7 @@ use App\Models\Shop\Order;
 use App\Models\Blog\Author;
 use App\Models\Shop\Payment;
 use App\Models\Shop\Product;
+use App\Models\Shop\Service;
 use App\Models\Shop\Customer;
 use App\Models\Shop\OrderItem;
 use Illuminate\Database\Seeder;
@@ -54,6 +55,11 @@ class DatabaseSeeder extends Seeder
             ->create());
         Brand::query()->update(['sort' => new Expression('id')]);
         $this->command->info('Shop brands created.');
+
+        $this->command->warn(PHP_EOL . 'Creating shop services...');
+        $services = $this->withProgressBar(50, fn () => Service::factory(1)
+            ->create());
+        $this->command->info('Shop services created.');
 
         $this->command->warn(PHP_EOL . 'Creating shop categories...');
         $categories = $this->withProgressBar(20, fn () => ShopCategory::factory(1)
